@@ -5,7 +5,7 @@ ThisBuild / version      := "0.1.0"
 ThisBuild / scalaVersion := "2.13.14"
 
 val commonSettings = List(
-  logo := "cats-parse-interpolator",
+  logo        := "cats-parse-interpolator",
   usefulTasks := Seq(
     UsefulTask("+test", "test on all versions").alias("t"),
     UsefulTask("readmeJVM / mdoc", "rebuild readme from the docs folder").alias("r"),

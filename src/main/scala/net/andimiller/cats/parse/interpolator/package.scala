@@ -14,20 +14,31 @@ package object interpolator {
       case Some(value) => Parser.string(value) *> p
       case None        => p
     }
+    private def pair0[T](s: String, p: Parser0[T]): Parser0[T]      = Parser.string0(s) *> p
     private def endParser(last: Option[String]): Parser0[Unit]      =
       last match {
         case Some(value) => Parser.string(value)
         case None        => Parser.unit
       }
+    private def endParser0(last: String): Parser0[Unit]             = Parser.string0(last)
 
     def p(): Parser[Unit]                                                                                                    = Parser.string(sc.parts.mkString)
+    def p0(): Parser0[Unit]                                                                                                  = Parser.string0(sc.parts.mkString)
     def p[A](pa: Parser[A]): Parser[A]                                                                                       = nonEmptyParts match {
       case a :: b :: Nil =>
         (pair(a, pa)) <* endParser(b)
     }
+    def p0[A](pa: Parser0[A]): Parser0[A]                                                                                    = sc.parts.toList match {
+      case a :: b :: Nil =>
+        (pair0(a, pa) <* endParser0(b))
+    }
     def p[A, B](pa: Parser[A], pb: Parser[B]): Parser[(A, B)]                                                                = nonEmptyParts match {
       case a :: b :: c :: Nil =>
         ((pair(a, pa), pair(b, pb)).tupled) <* endParser(c)
+    }
+    def p0[A, B](pa: Parser0[A], pb: Parser0[B]): Parser0[(A, B)]                                                            = sc.parts.toList match {
+      case a :: b :: c :: Nil =>
+        ((pair0(a, pa), pair0(b, pb)).tupled) <* endParser0(c)
     }
     def p[A, B, C](pa: Parser[A], pb: Parser[B], pc: Parser[C]): Parser[(A, B, C)]                                           = nonEmptyParts match {
       case a :: b :: c :: d :: Nil =>

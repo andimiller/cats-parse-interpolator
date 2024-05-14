@@ -32,3 +32,13 @@ You can interpolate other parsers into it:
 ```
 
 And it will even type the output correctly as a tuple of all subparsers.
+
+There is also an interpreter for `Parser0` if you need that:
+
+```scala mdoc
+{
+  val name = Parser.charsWhile0(_.isLetter).map(s => Option(s).filter(_.nonEmpty))
+  val number = Parser.charsWhile0(_.isDigit).map(s => if (s.isEmpty) 0 else s.toInt)
+  p0"$name = $number".parseAll(" = ")
+}
+```
