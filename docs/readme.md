@@ -42,3 +42,60 @@ There is also an interpreter for `Parser0` if you need that:
   p0"$name = $number".parseAll(" = ")
 }
 ```
+
+## Motivation
+
+For a comparison of how a parser is written with this, here's a parser for env variables, taking input like:
+
+`FOO=abcC,BAR=def`
+
+<table>
+<tr>
+<th>Standard</th>
+<th>Interpolator</th>
+</tr>
+<tr>
+<td>
+
+```scala mdoc
+{
+  val keyStartChars = ('a' to 'z').toSet ++ ('A' to 'Z').toSet ++ "_".toSet
+  val keyRestChars = keyStartChars ++ ('0' to '9').toSet
+  val key = for {
+    head <- Parser.charIn(keyStartChars).string
+    rest <- Parser.charsWhile0(keyRestChars).string
+  } yield head + rest
+  val value = Parser.charsWhile(c => !" ,".toSet(c))
+
+  val pair = for {
+    k <- key
+    _ <- Parser.char('=')
+    v <- value
+  } yield (k -> v)
+
+  pair.repSep(Parser.char(','))
+}.parseAll("FOO=abc,BAR=def")
+```
+
+</td>
+<td>
+
+```scala mdoc
+{
+  val keyStartChars = ('a' to 'z').toSet ++ ('A' to 'Z').toSet ++ "_".toSet
+
+  val keyStart = Parser.charIn(keyStartChars).string
+  val keyRest  = Parser.charsWhile0(keyStartChars ++ ('0' to '9').toSet).string
+
+  val key   = pm"$keyStart$keyRest".string
+  val value = Parser.charsWhile(c => !" ,".toSet(c))
+
+  p"$key=$value".repSep(Parser.char(','))
+}.parseAll("FOO=abc,BAR=def")
+```
+
+</td>
+</tr>
+</table>
+
+
