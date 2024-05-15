@@ -9,9 +9,19 @@ val commonSettings = List(
   usefulTasks := Seq(
     UsefulTask("+test", "test on all versions").alias("t"),
     UsefulTask("readmeJVM / mdoc", "rebuild readme from the docs folder").alias("r"),
-    UsefulTask("scalafmtSbt; scalafmtAll", "reformat all files").alias("f")
+    UsefulTask("scalafmtSbt; scalafmtAll", "reformat all files").alias("f"),
+    UsefulTask("codegenJVM/run", "run code generator").alias("c")
   )
 )
+lazy val codegen   = crossProject(JVMPlatform)
+  .crossType(CrossType.Pure)
+  .in(file("codegen"))
+  .settings(
+    publishArtifact := false,
+    libraryDependencies ++= List(
+      "co.fs2" %%% "fs2-io" % "3.10.2"
+    )
+  )
 
 lazy val `cats-parse-interpolator` = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .crossType(CrossType.Pure)
