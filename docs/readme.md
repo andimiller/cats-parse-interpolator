@@ -2,6 +2,14 @@
 
 This library adds a parser interpolator to make [cats-parse](https://github.com/typelevel/cats-parse) slightly easier to use.
 
+## Included Interpolators:
+
+| Prefix  | Description   | Inputs                            | Output    |
+| ------- | -----------   | --------                          | --------  | 
+| p       | Parser        | all `Parser`                      | `Parser`  |
+| p0      | Parser0       | all `Parser0`                     | `Parser0` |
+| pm      | Parser Monad  | `Parser`,  then either afterwards | `Parser0` |
+
 ## Usage
 
 ```scala
