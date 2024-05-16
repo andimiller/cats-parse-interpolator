@@ -27,6 +27,19 @@ class InterpolatorSpec extends munit.FunSuite {
     }
   }
 
+  test("One value - Monad") {
+    List(
+      pm"$name"  -> "bob",
+      pm"$name " -> "bob ",
+      pm" $name" -> " bob"
+    ).foreach { case (p, input) =>
+      assertEquals(
+        p.parseAll(input),
+        Right("bob")
+      )
+    }
+  }
+
   val number = Parser.charsWhile(_.isDigit).map(_.toInt)
 
   test("Two values") {
@@ -35,6 +48,20 @@ class InterpolatorSpec extends munit.FunSuite {
       p"$name $number"  -> "bob 10",
       p" $name $number" -> " bob 10",
       p"$name $number " -> "bob 10 "
+    ).foreach { case (p, input) =>
+      assertEquals(
+        p.parseAll(input),
+        Right(("bob", 10))
+      )
+    }
+  }
+
+  test("Two values - Monad") {
+    List(
+      pm"$name$number"   -> "bob10",
+      pm"$name $number"  -> "bob 10",
+      pm" $name $number" -> " bob 10",
+      pm"$name $number " -> "bob 10 "
     ).foreach { case (p, input) =>
       assertEquals(
         p.parseAll(input),
@@ -57,9 +84,32 @@ class InterpolatorSpec extends munit.FunSuite {
     }
   }
 
+  test("Three values - Monad") {
+    List(
+      pm"$name$equals$number"   -> "bob=10",
+      pm"$name $equals $number" -> "bob = 10"
+    ).foreach { case (p, input) =>
+      assertEquals(
+        p.parseAll(input),
+        Right(("bob", (), 10))
+      )
+    }
+  }
+
   test("Four values") {
     List(
       p"$name vs $name $equals $number" -> "bob vs mary = 10"
+    ).foreach { case (p, input) =>
+      assertEquals(
+        p.parseAll(input),
+        Right("bob", "mary", (), 10)
+      )
+    }
+  }
+
+  test("Four values - Monad") {
+    List(
+      pm"$name vs $name $equals $number" -> "bob vs mary = 10"
     ).foreach { case (p, input) =>
       assertEquals(
         p.parseAll(input),

@@ -100,11 +100,13 @@ object CodeGen extends IOApp.Simple {
     val pa       = templateApplicative("p", "pair", "endParser", "Parser", "nonEmptyParts")(_)
     val p0a      = templateApplicative("p0", "pair0", "endParser0", "Parser0", "sc.parts.toList")(_)
     val pm       = templateMonad("pm", "pair", "pair0", "endParser", "endParser0", "Parser", "Parser0", "partsSafeHead")(_)
+    val pm1      = templateApplicative("pm", "pair", "endParser", "Parser", "nonEmptyParts")(_)
     val generate =
       List(
         List(head),
         (1 to 22).map(pa),
         (1 to 22).map(p0a),
+        List(pm1(1)),
         (2 to 22).map(pm),
         List(tail)
       ).flatten

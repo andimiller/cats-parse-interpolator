@@ -1232,6 +1232,11 @@ package object interpolator {
         ).tupled <* endParser0(w)
     }
 
+    def pm[A](pa: Parser[A]): Parser[(A)] = nonEmptyParts match {
+      case a :: b :: Nil =>
+        (pair(a, pa)) <* endParser(b)
+    }
+
     def pm[A, B](pa: Parser[A], pb: Parser0[B]): Parser[(A, B)] = partsSafeHead match {
       case (a, b :: c :: Nil) =>
         pair(a, pa).flatMap { ar =>

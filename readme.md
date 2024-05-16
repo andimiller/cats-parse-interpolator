@@ -4,11 +4,11 @@ This library adds a parser interpolator to make [cats-parse](https://github.com/
 
 ## Included Interpolators:
 
-| Prefix  | Description   | Inputs                            | Output    |
-| ------- | -----------   | --------                          | --------  | 
-| p       | Parser        | all `Parser`                      | `Parser`  |
-| p0      | Parser0       | all `Parser0`                     | `Parser0` |
-| pm      | Parser Monad  | `Parser`,  then either afterwards | `Parser0` |
+| Prefix  | Description          | Inputs                            | Output    |
+| ------- | -----------          | --------                          | --------  | 
+| p       | Parser  Applicative  | all `Parser`                      | `Parser`  |
+| p0      | Parser0 Applicative  | all `Parser0`                     | `Parser0` |
+| pm      | Parser Monad         | `Parser`,  then either afterwards | `Parser`  |
 
 ## Usage
 
