@@ -1,8 +1,13 @@
 package net.andimiller.cats.parse.interpolator
 
+import cats._
+import cats.implicits._
 import cats.parse._
+import munit.ScalaCheckSuite
+import munit.FunSuite
+import org.scalacheck.Prop._
 
-class InterpolatorSpec extends munit.FunSuite {
+class InterpolatorSpec extends FunSuite with ScalaCheckSuite {
 
   test("Zero values") {
     val parser = p"hello world"
@@ -115,6 +120,16 @@ class InterpolatorSpec extends munit.FunSuite {
         p.parseAll(input),
         Right("bob", "mary", (), 10)
       )
+    }
+  }
+
+  val boolean = p"true".as(true).orElse(p"false".as(false))
+
+  property("Four booleans") {
+    val parser = p"$boolean$boolean$boolean$boolean"
+    forAll { (a: Boolean, b: Boolean, c: Boolean, d: Boolean) =>
+      val input: String = s"$a$b$c$d"
+      parser.parseAll(input) == (a, b, c, d).asRight
     }
   }
 

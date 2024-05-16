@@ -32,8 +32,9 @@ lazy val `cats-parse-interpolator` = crossProject(JVMPlatform, JSPlatform, Nativ
     name                   := "cats-parse-interpolator",
     crossScalaVersions     := List("2.13.14", "3.4.1"),
     libraryDependencies ++= List(
-      "org.typelevel" %%% "cats-parse" % "1.0.0",
-      "org.scalameta" %%% "munit"      % "1.0.0-RC1" % Test
+      "org.typelevel" %%% "cats-parse"       % "1.0.0",
+      "org.scalameta" %%% "munit"            % "1.0.0-RC1" % Test,
+      "org.scalameta" %%% "munit-scalacheck" % "1.0.0-RC1" % Test
     ),
     publishTo              := sonatypePublishTo.value,
     licenses               := Seq("Apache 2.0" -> url("https://opensource.org/license/apache-2-0")),
