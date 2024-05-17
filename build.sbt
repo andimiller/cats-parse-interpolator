@@ -14,7 +14,7 @@ val commonSettings = List(
   )
 )
 
-lazy val codegen   = crossProject(JVMPlatform)
+lazy val codegen = crossProject(JVMPlatform)
   .crossType(CrossType.Pure)
   .in(file("codegen"))
   .settings(
@@ -33,9 +33,10 @@ lazy val `cats-parse-interpolator` = crossProject(JVMPlatform, JSPlatform, Nativ
     name                   := "cats-parse-interpolator",
     crossScalaVersions     := List("2.13.14", "3.4.1"),
     libraryDependencies ++= List(
-      "org.typelevel" %%% "cats-parse"       % "1.0.0",
-      "org.scalameta" %%% "munit"            % "1.0.0-RC1" % Test,
-      "org.scalameta" %%% "munit-scalacheck" % "1.0.0-RC1" % Test
+      "org.typelevel" %%% "cats-parse"         % "1.0.0",
+      "org.scalameta" %%% "munit"              % "1.0.0-M11" % Test, // these have been lowered in version because I'm waiting for cats to get on scala native 0.5
+      "org.scalameta" %%% "munit-scalacheck"   % "1.0.0-M11" % Test,
+      "eu.timepit"    %%% "refined-scalacheck" % "0.11.1"    % Test
     ),
     publishTo              := sonatypePublishTo.value,
     licenses               := Seq("Apache 2.0" -> url("https://opensource.org/license/apache-2-0")),
@@ -49,11 +50,12 @@ lazy val readme = crossProject(JVMPlatform)
   .in(file("docs"))
   .settings(commonSettings)
   .settings(
-    mdocVariables := Map(
+    publishArtifact := false,
+    mdocVariables   := Map(
       "VERSION" -> version.value
     ),
-    mdocIn        := file("./docs/readme.md"),
-    mdocOut       := file("./readme.md")
+    mdocIn          := file("./docs/readme.md"),
+    mdocOut         := file("./readme.md")
   )
   .dependsOn(`cats-parse-interpolator`)
   .enablePlugins(MdocPlugin)
