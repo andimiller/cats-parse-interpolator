@@ -13,6 +13,7 @@ val commonSettings = List(
     UsefulTask("codegenJVM/run", "run code generator").alias("c")
   )
 )
+
 lazy val codegen   = crossProject(JVMPlatform)
   .crossType(CrossType.Pure)
   .in(file("codegen"))
@@ -25,7 +26,7 @@ lazy val codegen   = crossProject(JVMPlatform)
 
 lazy val `cats-parse-interpolator` = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .crossType(CrossType.Pure)
-  .in(file("."))
+  .in(file("core"))
   .settings(commonSettings)
   .settings(
     organization           := "net.andimiller",
