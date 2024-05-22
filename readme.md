@@ -13,7 +13,7 @@ This library adds a parser interpolator to make [cats-parse](https://github.com/
 ## Usage
 
 ```scala
-libraryDependencies += "net.andimiller" %% "cats-parse-interpolator" % 0.1.0
+libraryDependencies += "net.andimiller" %% "cats-parse-interpolator" % "0.1.0"
 ```
 
 You then import the library, and probably cats.parse too
