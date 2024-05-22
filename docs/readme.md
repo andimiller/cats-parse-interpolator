@@ -21,6 +21,7 @@ You then import the library, and probably cats.parse too
 ```scala mdoc
 import net.andimiller.cats.parse.interpolator._
 import cats.parse._
+import cats.implicits._ // if you need extra syntax
 ```
 
 Then you can create a parser with a `p` prefix like so:
@@ -53,7 +54,67 @@ There is also an interpreter for `Parser0` if you need that:
 
 ## Motivation
 
-For a comparison of how a parser is written with this, here's a parser for env variables, taking input like:
+### LISP Calculator Example
+
+For a simple example, say we want to parse these:
+
+```scala mdoc:silent
+val calculatorInputs = List(
+  "(+ 2 2)",
+  "(+ 2 (* 3 6))",
+  "42"
+)
+```
+
+Into these:
+
+```scala mdoc
+enum Expr:
+  case Number(value: Int)
+  case Plus(left: Expr, right: Expr)
+  case Multiply(left: Expr, right: Expr)
+```
+
+<table>
+<tr>
+<th>Standard</th>
+
+```scala mdoc:to-string
+calculatorInputs.map {
+  Parser.recursive[Expr] { recurse =>
+    val number   = Numbers.digits.map(_.toInt).map(Expr.Number)  
+    val plus     = p"(+ $recurse $recurse)".map(Expr.Plus)
+    val multiply = p"(* $recurse $recurse)".map(Expr.Multiply)
+    number.orElse(plus).orElse(multiply)
+  }.parseAll
+}
+```
+
+<th>Interpolator</th>
+</tr>
+<tr>
+<td>
+
+```scala mdoc:to-string
+calculatorInputs.map {
+  Parser.recursive[Expr] { recurse =>
+    val number   = Numbers.digits.map(_.toInt).map(Expr.Number)  
+    val plus     = (Parser.string("(+ ") *> recurse <* Parser.string(" "), recurse <* Parser.string(")")).mapN(Expr.Plus)
+    val multiply = (Parser.string("(* ") *> recurse <* Parser.string(" "), recurse <* Parser.string(")")).mapN(Expr.Multiply)
+    number.orElse(plus).orElse(multiply)
+  }.parseAll
+}
+```
+
+</td>
+</tr>
+</table>
+
+
+### Env Variable Example
+
+
+For a more complex parser, here's a parser for env variables, taking input like:
 
 `FOO=abcC,BAR=def`
 
