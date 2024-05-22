@@ -147,7 +147,9 @@ calculatorInputs.map {
 
 For a more complex parser, here's a parser for env variables, taking input like:
 
-`FOO=abcC,BAR=def`
+```scala
+val envVars = "FOO=abcC,BAR=def"
+```
 
 <table>
 <tr>
@@ -174,9 +176,9 @@ For a more complex parser, here's a parser for env variables, taking input like:
   } yield (k -> v)
 
   pair.repSep(Parser.char(','))
-}.parseAll("FOO=abc,BAR=def")
+}.parseAll(envVars)
 // res5: Either[Error, NonEmptyList[Tuple2[String, String]]] = Right(
-//   value = NonEmptyList(head = ("FOO", "abc"), tail = List(("BAR", "def")))
+//   value = NonEmptyList(head = ("FOO", "abcC"), tail = List(("BAR", "def")))
 // )
 ```
 
@@ -194,9 +196,9 @@ For a more complex parser, here's a parser for env variables, taking input like:
   val value = Parser.charsWhile(c => !" ,".toSet(c))
 
   p"$key=$value".repSep(Parser.char(','))
-}.parseAll("FOO=abc,BAR=def")
+}.parseAll(envVars)
 // res6: Either[Error, NonEmptyList[Tuple2[String, String]]] = Right(
-//   value = NonEmptyList(head = ("FOO", "abc"), tail = List(("BAR", "def")))
+//   value = NonEmptyList(head = ("FOO", "abcC"), tail = List(("BAR", "def")))
 // )
 ```
 

@@ -124,7 +124,9 @@ calculatorInputs.map {
 
 For a more complex parser, here's a parser for env variables, taking input like:
 
-`FOO=abcC,BAR=def`
+```scala mdoc:silent
+val envVars = "FOO=abcC,BAR=def"
+```
 
 <table>
 <tr>
@@ -151,7 +153,7 @@ For a more complex parser, here's a parser for env variables, taking input like:
   } yield (k -> v)
 
   pair.repSep(Parser.char(','))
-}.parseAll("FOO=abc,BAR=def")
+}.parseAll(envVars)
 ```
 
 </td>
@@ -168,7 +170,7 @@ For a more complex parser, here's a parser for env variables, taking input like:
   val value = Parser.charsWhile(c => !" ,".toSet(c))
 
   p"$key=$value".repSep(Parser.char(','))
-}.parseAll("FOO=abc,BAR=def")
+}.parseAll(envVars)
 ```
 
 </td>
