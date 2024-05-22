@@ -81,6 +81,10 @@ enum Expr:
 <table>
 <tr>
 <th>Standard</th>
+<th>Interpolator</th>
+</tr>
+<tr>
+<td>
 
 ```scala
 calculatorInputs.map {
@@ -94,9 +98,7 @@ calculatorInputs.map {
 // res3: List[Either[Error, Expr]] = List(Right(Plus(Number(2),Number(2))), Right(Plus(Number(2),Multiply(Number(3),Number(6)))), Right(Number(42)))
 ```
 
-<th>Interpolator</th>
-</tr>
-<tr>
+</td>
 <td>
 
 ```scala

@@ -78,6 +78,10 @@ enum Expr:
 <table>
 <tr>
 <th>Standard</th>
+<th>Interpolator</th>
+</tr>
+<tr>
+<td>
 
 ```scala mdoc:to-string
 calculatorInputs.map {
@@ -90,9 +94,7 @@ calculatorInputs.map {
 }
 ```
 
-<th>Interpolator</th>
-</tr>
-<tr>
+</td>
 <td>
 
 ```scala mdoc:to-string
