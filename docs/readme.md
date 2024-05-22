@@ -87,8 +87,14 @@ enum Expr:
 calculatorInputs.map {
   Parser.recursive[Expr] { recurse =>
     val number   = Numbers.digits.map(_.toInt).map(Expr.Number)  
-    val plus     = p"(+ $recurse $recurse)".map(Expr.Plus)
-    val multiply = p"(* $recurse $recurse)".map(Expr.Multiply)
+    val plus     = (
+                     Parser.string("(+ ") *> recurse <* Parser.string(" "), 
+                     recurse <* Parser.string(")")
+                   ).mapN(Expr.Plus)
+    val multiply = (
+                     Parser.string("(* ") *> recurse <* Parser.string(" "), 
+                     recurse <* Parser.string(")")
+                   ).mapN(Expr.Multiply)
     number.orElse(plus).orElse(multiply)
   }.parseAll
 }
@@ -101,14 +107,8 @@ calculatorInputs.map {
 calculatorInputs.map {
   Parser.recursive[Expr] { recurse =>
     val number   = Numbers.digits.map(_.toInt).map(Expr.Number)  
-    val plus     = (
-                     Parser.string("(+ ") *> recurse <* Parser.string(" "), 
-                     recurse <* Parser.string(")")
-                   ).mapN(Expr.Plus)
-    val multiply = (
-                     Parser.string("(* ") *> recurse <* Parser.string(" "), 
-                     recurse <* Parser.string(")")
-                   ).mapN(Expr.Multiply)
+    val plus     = p"(+ $recurse $recurse)".map(Expr.Plus)
+    val multiply = p"(* $recurse $recurse)".map(Expr.Multiply)
     number.orElse(plus).orElse(multiply)
   }.parseAll
 }
