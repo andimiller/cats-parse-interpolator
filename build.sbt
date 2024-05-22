@@ -42,7 +42,7 @@ lazy val codegen = crossProject(JVMPlatform)
   .crossType(CrossType.Pure)
   .in(file("codegen"))
   .settings(
-    publishArtifact := false,
+    (publish / skip) := true,
     libraryDependencies ++= List(
       "co.fs2" %%% "fs2-io" % "3.10.2"
     )
@@ -77,7 +77,7 @@ lazy val readme = crossProject(JVMPlatform)
   .in(file("docs"))
   .settings(commonSettings)
   .settings(
-    publishArtifact := false,
+    (publish / skip) := true,
     mdocVariables   := Map(
       "VERSION" -> version.value
     ),
