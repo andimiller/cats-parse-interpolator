@@ -5,7 +5,7 @@ import sbtwelcome._
 ThisBuild / version      := "0.1.0"
 ThisBuild / scalaVersion := "2.13.14"
 
-logo  :=
+logo :=
   s"""
      |                  •           ┓       
      |┏┏┓╋┏━━┏┓┏┓┏┓┏┏┓━━┓┏┓╋┏┓┏┓┏┓┏┓┃┏┓╋┏┓┏┓
@@ -23,8 +23,8 @@ val usefulTasksValue = Seq(
 usefulTasks := usefulTasksValue
 
 val commonSettings = List(
-logo  :=
-  s"""
+  logo        :=
+    s"""
      |                  •           ┓       
      |┏┏┓╋┏━━┏┓┏┓┏┓┏┏┓━━┓┏┓╋┏┓┏┓┏┓┏┓┃┏┓╋┏┓┏┓
      |┗┗┻┗┛  ┣┛┗┻┛ ┛┗   ┗┛┗┗┗ ┛ ┣┛┗┛┗┗┻┗┗┛┛ 
@@ -32,7 +32,9 @@ logo  :=
      |
      |v${version.value}
      |${scala.Console.RED}${crossProjectPlatform.value}${scala.Console.RESET}
-     |${scala.Console.CYAN}Scala ${scalaVersion.value} (${crossScalaVersions.value.filter(_ != scalaVersion.value).mkString(", ")}) ${scala.Console.RESET}
+     |${scala.Console.CYAN}Scala ${scalaVersion.value} (${crossScalaVersions.value
+        .filter(_ != scalaVersion.value)
+        .mkString(", ")}) ${scala.Console.RESET}
      |
      |""".stripMargin,
   usefulTasks := usefulTasksValue
@@ -55,7 +57,7 @@ lazy val `cats-parse-interpolator` = crossProject(JVMPlatform, JSPlatform, Nativ
   .settings(
     organization           := "net.andimiller",
     name                   := "cats-parse-interpolator",
-    crossScalaVersions     := List("2.13.14", "3.4.1"),
+    crossScalaVersions     := List("2.13.14", "2.12.19", "3.4.1"),
     libraryDependencies ++= List(
       "org.typelevel" %%% "cats-parse"         % "1.0.0",
       "org.scalameta" %%% "munit"              % "1.0.0-M11" % Test, // these have been lowered in version because I'm waiting for cats to get on scala native 0.5
@@ -78,11 +80,11 @@ lazy val readme = crossProject(JVMPlatform)
   .settings(commonSettings)
   .settings(
     (publish / skip) := true,
-    mdocVariables   := Map(
+    mdocVariables    := Map(
       "VERSION" -> version.value
     ),
-    mdocIn          := file("./docs/readme.md"),
-    mdocOut         := file("./readme.md")
+    mdocIn           := file("./docs/readme.md"),
+    mdocOut          := file("./readme.md")
   )
   .dependsOn(`cats-parse-interpolator`)
   .enablePlugins(MdocPlugin)
