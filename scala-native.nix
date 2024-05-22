@@ -9,6 +9,7 @@ in rec {
     '';
     LLVM_BIN = pkgs.clang + "/bin";
     buildInputs = with pkgs; [
+      zsh
       stdenv
       sbt
       openjdk
@@ -18,6 +19,7 @@ in rec {
       zlib
       s2n
       nodejs
+      mold
     ];
   };
 } 

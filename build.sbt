@@ -1,17 +1,41 @@
 import xerial.sbt.Sonatype._
+import scala.scalanative.build._
 import sbtwelcome._
 
 ThisBuild / version      := "0.1.0"
 ThisBuild / scalaVersion := "2.13.14"
 
+logo  :=
+  s"""
+     |                  •           ┓       
+     |┏┏┓╋┏━━┏┓┏┓┏┓┏┏┓━━┓┏┓╋┏┓┏┓┏┓┏┓┃┏┓╋┏┓┏┓
+     |┗┗┻┗┛  ┣┛┗┻┛ ┛┗   ┗┛┗┗┗ ┛ ┣┛┗┛┗┗┻┗┗┛┛ 
+     |       ┛                  ┛           
+     |""".stripMargin
+
+val usefulTasksValue = Seq(
+  UsefulTask("+test", "test on all versions").alias("t"),
+  UsefulTask("readmeJVM / mdoc", "rebuild readme from the docs folder").alias("r"),
+  UsefulTask("scalafmtSbt; scalafmtAll", "reformat all files").alias("f"),
+  UsefulTask("codegenJVM/run", "run code generator").alias("c")
+)
+
+usefulTasks := usefulTasksValue
+
 val commonSettings = List(
-  logo        := "cats-parse-interpolator",
-  usefulTasks := Seq(
-    UsefulTask("+test", "test on all versions").alias("t"),
-    UsefulTask("readmeJVM / mdoc", "rebuild readme from the docs folder").alias("r"),
-    UsefulTask("scalafmtSbt; scalafmtAll", "reformat all files").alias("f"),
-    UsefulTask("codegenJVM/run", "run code generator").alias("c")
-  )
+logo  :=
+  s"""
+     |                  •           ┓       
+     |┏┏┓╋┏━━┏┓┏┓┏┓┏┏┓━━┓┏┓╋┏┓┏┓┏┓┏┓┃┏┓╋┏┓┏┓
+     |┗┗┻┗┛  ┣┛┗┻┛ ┛┗   ┗┛┗┗┗ ┛ ┣┛┗┛┗┗┻┗┗┛┛ 
+     |       ┛                  ┛           
+     |
+     |v${version.value}
+     |${scala.Console.RED}${crossProjectPlatform.value}${scala.Console.RESET}
+     |${scala.Console.CYAN}Scala ${scalaVersion.value} (${crossScalaVersions.value.filter(_ != scalaVersion.value).mkString(", ")}) ${scala.Console.RESET}
+     |
+     |""".stripMargin,
+  usefulTasks := usefulTasksValue
 )
 
 lazy val codegen = crossProject(JVMPlatform)
@@ -43,7 +67,10 @@ lazy val `cats-parse-interpolator` = crossProject(JVMPlatform, JSPlatform, Nativ
     sonatypeProjectHosting := Some(GitHubHosting("andimiller", "cats-parse-interpolator", "andi at andimiller dot net")),
     developers             := List(
       Developer(id = "andimiller", name = "Andi Miller", email = "andi@andimiller.net", url = url("http://andimiller.net"))
-    )
+    ),
+    nativeConfig ~= { c =>
+      c
+    }
   )
 
 lazy val readme = crossProject(JVMPlatform)
