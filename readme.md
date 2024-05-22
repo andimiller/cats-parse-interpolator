@@ -95,7 +95,16 @@ calculatorInputs.map {
     number.orElse(plus).orElse(multiply)
   }.parseAll
 }
-// res3: List[Either[Error, Expr]] = List(Right(Plus(Number(2),Number(2))), Right(Plus(Number(2),Multiply(Number(3),Number(6)))), Right(Number(42)))
+// res3: List[Either[Error, Expr]] = List(
+//   Right(value = Plus(left = Number(value = 2), right = Number(value = 2))),
+//   Right(
+//     value = Plus(
+//       left = Number(value = 2),
+//       right = Multiply(left = Number(value = 3), right = Number(value = 6))
+//     )
+//   ),
+//   Right(value = Number(value = 42))
+// )
 ```
 
 </td>
@@ -105,12 +114,27 @@ calculatorInputs.map {
 calculatorInputs.map {
   Parser.recursive[Expr] { recurse =>
     val number   = Numbers.digits.map(_.toInt).map(Expr.Number)  
-    val plus     = (Parser.string("(+ ") *> recurse <* Parser.string(" "), recurse <* Parser.string(")")).mapN(Expr.Plus)
-    val multiply = (Parser.string("(* ") *> recurse <* Parser.string(" "), recurse <* Parser.string(")")).mapN(Expr.Multiply)
+    val plus     = (
+                     Parser.string("(+ ") *> recurse <* Parser.string(" "), 
+                     recurse <* Parser.string(")")
+                   ).mapN(Expr.Plus)
+    val multiply = (
+                     Parser.string("(* ") *> recurse <* Parser.string(" "), 
+                     recurse <* Parser.string(")")
+                   ).mapN(Expr.Multiply)
     number.orElse(plus).orElse(multiply)
   }.parseAll
 }
-// res4: List[Either[Error, Expr]] = List(Right(Plus(Number(2),Number(2))), Right(Plus(Number(2),Multiply(Number(3),Number(6)))), Right(Number(42)))
+// res4: List[Either[Error, Expr]] = List(
+//   Right(value = Plus(left = Number(value = 2), right = Number(value = 2))),
+//   Right(
+//     value = Plus(
+//       left = Number(value = 2),
+//       right = Multiply(left = Number(value = 3), right = Number(value = 6))
+//     )
+//   ),
+//   Right(value = Number(value = 42))
+// )
 ```
 
 </td>

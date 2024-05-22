@@ -83,7 +83,7 @@ enum Expr:
 <tr>
 <td>
 
-```scala mdoc:to-string
+```scala mdoc
 calculatorInputs.map {
   Parser.recursive[Expr] { recurse =>
     val number   = Numbers.digits.map(_.toInt).map(Expr.Number)  
@@ -97,12 +97,18 @@ calculatorInputs.map {
 </td>
 <td>
 
-```scala mdoc:to-string
+```scala mdoc
 calculatorInputs.map {
   Parser.recursive[Expr] { recurse =>
     val number   = Numbers.digits.map(_.toInt).map(Expr.Number)  
-    val plus     = (Parser.string("(+ ") *> recurse <* Parser.string(" "), recurse <* Parser.string(")")).mapN(Expr.Plus)
-    val multiply = (Parser.string("(* ") *> recurse <* Parser.string(" "), recurse <* Parser.string(")")).mapN(Expr.Multiply)
+    val plus     = (
+                     Parser.string("(+ ") *> recurse <* Parser.string(" "), 
+                     recurse <* Parser.string(")")
+                   ).mapN(Expr.Plus)
+    val multiply = (
+                     Parser.string("(* ") *> recurse <* Parser.string(" "), 
+                     recurse <* Parser.string(")")
+                   ).mapN(Expr.Multiply)
     number.orElse(plus).orElse(multiply)
   }.parseAll
 }
