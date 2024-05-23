@@ -9,53 +9,52 @@ import scala.annotation.nowarn
 package object interpolator {
   @nowarn("msg=not.*?exhaustive") // we do a lot of things here with matching on Lists which are a known length
   implicit class ParserHelperApplicative(val sc: StringContext) extends AnyVal {
-    private def nonEmptyParts: List[Option[String]]           =
+    private inline def nonEmptyParts: List[Option[String]]           =
       sc.parts.toList.map(s => Option(s).filter(_.nonEmpty))
-    private def partsSafeHead: (Option[String], List[String]) =
+    private inline def partsSafeHead: (Option[String], List[String]) =
       Option(sc.parts.head).filter(_.nonEmpty) -> sc.parts.tail.toList
-    private def pair[T](s: Option[String], p: Parser[T]): Parser[T] = s match {
+    private inline def pair[T](s: Option[String], p: Parser[T]): Parser[T] = s match {
       case Some(value) => Parser.string(value) *> p
       case None        => p
     }
-    private def pair0[T](s: String, p: Parser0[T]): Parser0[T]      = Parser.string0(s) *> p
-    private def endParser(last: Option[String]): Parser0[Unit]      =
+    private inline def pair0[T](s: String, p: Parser0[T]): Parser0[T]      = Parser.string0(s) *> p
+    private inline def endParser(last: Option[String]): Parser0[Unit]      =
       last match {
         case Some(value) => Parser.string(value)
         case None        => Parser.unit
       }
-    private def endParser0(last: String): Parser0[Unit]             = Parser.string0(last)
+    private inline def endParser0(last: String): Parser0[Unit]             = Parser.string0(last)
+    inline def p(): Parser[Unit]                                           = Parser.string(sc.parts.mkString)
+    inline def p0(): Parser0[Unit]                                         = Parser.string0(sc.parts.mkString)
+    inline def pm(): Parser[Unit]                                          = Parser.string(sc.parts.mkString)
 
-    def p(): Parser[Unit]   = Parser.string(sc.parts.mkString)
-    def p0(): Parser0[Unit] = Parser.string0(sc.parts.mkString)
-    def pm(): Parser[Unit]  = Parser.string(sc.parts.mkString)
-
-    def p[A](pa: Parser[A]): Parser[(A)] = nonEmptyParts match {
+    inline def p[A](pa: Parser[A]): Parser[(A)] = nonEmptyParts match {
       case a :: b :: Nil =>
         (pair(a, pa)) <* endParser(b)
     }
 
-    def p[A, B](pa: Parser[A], pb: Parser[B]): Parser[(A, B)] = nonEmptyParts match {
+    inline def p[A, B](pa: Parser[A], pb: Parser[B]): Parser[(A, B)] = nonEmptyParts match {
       case a :: b :: c :: Nil =>
         (pair(a, pa), pair(b, pb)).tupled <* endParser(c)
     }
 
-    def p[A, B, C](pa: Parser[A], pb: Parser[B], pc: Parser[C]): Parser[(A, B, C)] = nonEmptyParts match {
+    inline def p[A, B, C](pa: Parser[A], pb: Parser[B], pc: Parser[C]): Parser[(A, B, C)] = nonEmptyParts match {
       case a :: b :: c :: d :: Nil =>
         (pair(a, pa), pair(b, pb), pair(c, pc)).tupled <* endParser(d)
     }
 
-    def p[A, B, C, D](pa: Parser[A], pb: Parser[B], pc: Parser[C], pd: Parser[D]): Parser[(A, B, C, D)] = nonEmptyParts match {
+    inline def p[A, B, C, D](pa: Parser[A], pb: Parser[B], pc: Parser[C], pd: Parser[D]): Parser[(A, B, C, D)] = nonEmptyParts match {
       case a :: b :: c :: d :: e :: Nil =>
         (pair(a, pa), pair(b, pb), pair(c, pc), pair(d, pd)).tupled <* endParser(e)
     }
 
-    def p[A, B, C, D, E](pa: Parser[A], pb: Parser[B], pc: Parser[C], pd: Parser[D], pe: Parser[E]): Parser[(A, B, C, D, E)] =
+    inline def p[A, B, C, D, E](pa: Parser[A], pb: Parser[B], pc: Parser[C], pd: Parser[D], pe: Parser[E]): Parser[(A, B, C, D, E)] =
       nonEmptyParts match {
         case a :: b :: c :: d :: e :: f :: Nil =>
           (pair(a, pa), pair(b, pb), pair(c, pc), pair(d, pd), pair(e, pe)).tupled <* endParser(f)
       }
 
-    def p[A, B, C, D, E, F](
+    inline def p[A, B, C, D, E, F](
         pa: Parser[A],
         pb: Parser[B],
         pc: Parser[C],
@@ -67,7 +66,7 @@ package object interpolator {
         (pair(a, pa), pair(b, pb), pair(c, pc), pair(d, pd), pair(e, pe), pair(f, pf)).tupled <* endParser(g)
     }
 
-    def p[A, B, C, D, E, F, G](
+    inline def p[A, B, C, D, E, F, G](
         pa: Parser[A],
         pb: Parser[B],
         pc: Parser[C],
@@ -80,7 +79,7 @@ package object interpolator {
         (pair(a, pa), pair(b, pb), pair(c, pc), pair(d, pd), pair(e, pe), pair(f, pf), pair(g, pg)).tupled <* endParser(h)
     }
 
-    def p[A, B, C, D, E, F, G, H](
+    inline def p[A, B, C, D, E, F, G, H](
         pa: Parser[A],
         pb: Parser[B],
         pc: Parser[C],
@@ -94,7 +93,7 @@ package object interpolator {
         (pair(a, pa), pair(b, pb), pair(c, pc), pair(d, pd), pair(e, pe), pair(f, pf), pair(g, pg), pair(h, ph)).tupled <* endParser(i)
     }
 
-    def p[A, B, C, D, E, F, G, H, I](
+    inline def p[A, B, C, D, E, F, G, H, I](
         pa: Parser[A],
         pb: Parser[B],
         pc: Parser[C],
@@ -119,7 +118,7 @@ package object interpolator {
         ).tupled <* endParser(j)
     }
 
-    def p[A, B, C, D, E, F, G, H, I, J](
+    inline def p[A, B, C, D, E, F, G, H, I, J](
         pa: Parser[A],
         pb: Parser[B],
         pc: Parser[C],
@@ -146,7 +145,7 @@ package object interpolator {
         ).tupled <* endParser(k)
     }
 
-    def p[A, B, C, D, E, F, G, H, I, J, K](
+    inline def p[A, B, C, D, E, F, G, H, I, J, K](
         pa: Parser[A],
         pb: Parser[B],
         pc: Parser[C],
@@ -175,7 +174,7 @@ package object interpolator {
         ).tupled <* endParser(l)
     }
 
-    def p[A, B, C, D, E, F, G, H, I, J, K, L](
+    inline def p[A, B, C, D, E, F, G, H, I, J, K, L](
         pa: Parser[A],
         pb: Parser[B],
         pc: Parser[C],
@@ -206,7 +205,7 @@ package object interpolator {
         ).tupled <* endParser(m)
     }
 
-    def p[A, B, C, D, E, F, G, H, I, J, K, L, M](
+    inline def p[A, B, C, D, E, F, G, H, I, J, K, L, M](
         pa: Parser[A],
         pb: Parser[B],
         pc: Parser[C],
@@ -239,7 +238,7 @@ package object interpolator {
         ).tupled <* endParser(n)
     }
 
-    def p[A, B, C, D, E, F, G, H, I, J, K, L, M, N](
+    inline def p[A, B, C, D, E, F, G, H, I, J, K, L, M, N](
         pa: Parser[A],
         pb: Parser[B],
         pc: Parser[C],
@@ -274,7 +273,7 @@ package object interpolator {
         ).tupled <* endParser(o)
     }
 
-    def p[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O](
+    inline def p[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O](
         pa: Parser[A],
         pb: Parser[B],
         pc: Parser[C],
@@ -311,7 +310,7 @@ package object interpolator {
         ).tupled <* endParser(p)
     }
 
-    def p[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P](
+    inline def p[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P](
         pa: Parser[A],
         pb: Parser[B],
         pc: Parser[C],
@@ -350,7 +349,7 @@ package object interpolator {
         ).tupled <* endParser(q)
     }
 
-    def p[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q](
+    inline def p[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q](
         pa: Parser[A],
         pb: Parser[B],
         pc: Parser[C],
@@ -391,7 +390,7 @@ package object interpolator {
         ).tupled <* endParser(r)
     }
 
-    def p[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R](
+    inline def p[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R](
         pa: Parser[A],
         pb: Parser[B],
         pc: Parser[C],
@@ -434,7 +433,7 @@ package object interpolator {
         ).tupled <* endParser(s)
     }
 
-    def p[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S](
+    inline def p[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S](
         pa: Parser[A],
         pb: Parser[B],
         pc: Parser[C],
@@ -479,7 +478,7 @@ package object interpolator {
         ).tupled <* endParser(t)
     }
 
-    def p[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T](
+    inline def p[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T](
         pa: Parser[A],
         pb: Parser[B],
         pc: Parser[C],
@@ -526,7 +525,7 @@ package object interpolator {
         ).tupled <* endParser(u)
     }
 
-    def p[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U](
+    inline def p[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U](
         pa: Parser[A],
         pb: Parser[B],
         pc: Parser[C],
@@ -575,7 +574,7 @@ package object interpolator {
         ).tupled <* endParser(v)
     }
 
-    def p[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V](
+    inline def p[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V](
         pa: Parser[A],
         pb: Parser[B],
         pc: Parser[C],
@@ -626,33 +625,34 @@ package object interpolator {
         ).tupled <* endParser(w)
     }
 
-    def p0[A](pa: Parser0[A]): Parser0[(A)] = sc.parts.toList match {
+    inline def p0[A](pa: Parser0[A]): Parser0[(A)] = sc.parts.toList match {
       case a :: b :: Nil =>
         (pair0(a, pa)) <* endParser0(b)
     }
 
-    def p0[A, B](pa: Parser0[A], pb: Parser0[B]): Parser0[(A, B)] = sc.parts.toList match {
+    inline def p0[A, B](pa: Parser0[A], pb: Parser0[B]): Parser0[(A, B)] = sc.parts.toList match {
       case a :: b :: c :: Nil =>
         (pair0(a, pa), pair0(b, pb)).tupled <* endParser0(c)
     }
 
-    def p0[A, B, C](pa: Parser0[A], pb: Parser0[B], pc: Parser0[C]): Parser0[(A, B, C)] = sc.parts.toList match {
+    inline def p0[A, B, C](pa: Parser0[A], pb: Parser0[B], pc: Parser0[C]): Parser0[(A, B, C)] = sc.parts.toList match {
       case a :: b :: c :: d :: Nil =>
         (pair0(a, pa), pair0(b, pb), pair0(c, pc)).tupled <* endParser0(d)
     }
 
-    def p0[A, B, C, D](pa: Parser0[A], pb: Parser0[B], pc: Parser0[C], pd: Parser0[D]): Parser0[(A, B, C, D)] = sc.parts.toList match {
-      case a :: b :: c :: d :: e :: Nil =>
-        (pair0(a, pa), pair0(b, pb), pair0(c, pc), pair0(d, pd)).tupled <* endParser0(e)
-    }
+    inline def p0[A, B, C, D](pa: Parser0[A], pb: Parser0[B], pc: Parser0[C], pd: Parser0[D]): Parser0[(A, B, C, D)] =
+      sc.parts.toList match {
+        case a :: b :: c :: d :: e :: Nil =>
+          (pair0(a, pa), pair0(b, pb), pair0(c, pc), pair0(d, pd)).tupled <* endParser0(e)
+      }
 
-    def p0[A, B, C, D, E](pa: Parser0[A], pb: Parser0[B], pc: Parser0[C], pd: Parser0[D], pe: Parser0[E]): Parser0[(A, B, C, D, E)] =
+    inline def p0[A, B, C, D, E](pa: Parser0[A], pb: Parser0[B], pc: Parser0[C], pd: Parser0[D], pe: Parser0[E]): Parser0[(A, B, C, D, E)] =
       sc.parts.toList match {
         case a :: b :: c :: d :: e :: f :: Nil =>
           (pair0(a, pa), pair0(b, pb), pair0(c, pc), pair0(d, pd), pair0(e, pe)).tupled <* endParser0(f)
       }
 
-    def p0[A, B, C, D, E, F](
+    inline def p0[A, B, C, D, E, F](
         pa: Parser0[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -664,7 +664,7 @@ package object interpolator {
         (pair0(a, pa), pair0(b, pb), pair0(c, pc), pair0(d, pd), pair0(e, pe), pair0(f, pf)).tupled <* endParser0(g)
     }
 
-    def p0[A, B, C, D, E, F, G](
+    inline def p0[A, B, C, D, E, F, G](
         pa: Parser0[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -677,7 +677,7 @@ package object interpolator {
         (pair0(a, pa), pair0(b, pb), pair0(c, pc), pair0(d, pd), pair0(e, pe), pair0(f, pf), pair0(g, pg)).tupled <* endParser0(h)
     }
 
-    def p0[A, B, C, D, E, F, G, H](
+    inline def p0[A, B, C, D, E, F, G, H](
         pa: Parser0[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -700,7 +700,7 @@ package object interpolator {
         ).tupled <* endParser0(i)
     }
 
-    def p0[A, B, C, D, E, F, G, H, I](
+    inline def p0[A, B, C, D, E, F, G, H, I](
         pa: Parser0[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -725,7 +725,7 @@ package object interpolator {
         ).tupled <* endParser0(j)
     }
 
-    def p0[A, B, C, D, E, F, G, H, I, J](
+    inline def p0[A, B, C, D, E, F, G, H, I, J](
         pa: Parser0[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -752,7 +752,7 @@ package object interpolator {
         ).tupled <* endParser0(k)
     }
 
-    def p0[A, B, C, D, E, F, G, H, I, J, K](
+    inline def p0[A, B, C, D, E, F, G, H, I, J, K](
         pa: Parser0[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -781,7 +781,7 @@ package object interpolator {
         ).tupled <* endParser0(l)
     }
 
-    def p0[A, B, C, D, E, F, G, H, I, J, K, L](
+    inline def p0[A, B, C, D, E, F, G, H, I, J, K, L](
         pa: Parser0[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -812,7 +812,7 @@ package object interpolator {
         ).tupled <* endParser0(m)
     }
 
-    def p0[A, B, C, D, E, F, G, H, I, J, K, L, M](
+    inline def p0[A, B, C, D, E, F, G, H, I, J, K, L, M](
         pa: Parser0[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -845,7 +845,7 @@ package object interpolator {
         ).tupled <* endParser0(n)
     }
 
-    def p0[A, B, C, D, E, F, G, H, I, J, K, L, M, N](
+    inline def p0[A, B, C, D, E, F, G, H, I, J, K, L, M, N](
         pa: Parser0[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -880,7 +880,7 @@ package object interpolator {
         ).tupled <* endParser0(o)
     }
 
-    def p0[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O](
+    inline def p0[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O](
         pa: Parser0[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -917,7 +917,7 @@ package object interpolator {
         ).tupled <* endParser0(p)
     }
 
-    def p0[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P](
+    inline def p0[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P](
         pa: Parser0[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -956,7 +956,7 @@ package object interpolator {
         ).tupled <* endParser0(q)
     }
 
-    def p0[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q](
+    inline def p0[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q](
         pa: Parser0[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -997,7 +997,7 @@ package object interpolator {
         ).tupled <* endParser0(r)
     }
 
-    def p0[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R](
+    inline def p0[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R](
         pa: Parser0[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -1040,7 +1040,7 @@ package object interpolator {
         ).tupled <* endParser0(s)
     }
 
-    def p0[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S](
+    inline def p0[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S](
         pa: Parser0[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -1085,7 +1085,7 @@ package object interpolator {
         ).tupled <* endParser0(t)
     }
 
-    def p0[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T](
+    inline def p0[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T](
         pa: Parser0[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -1132,7 +1132,7 @@ package object interpolator {
         ).tupled <* endParser0(u)
     }
 
-    def p0[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U](
+    inline def p0[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U](
         pa: Parser0[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -1181,7 +1181,7 @@ package object interpolator {
         ).tupled <* endParser0(v)
     }
 
-    def p0[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V](
+    inline def p0[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V](
         pa: Parser0[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -1232,33 +1232,33 @@ package object interpolator {
         ).tupled <* endParser0(w)
     }
 
-    def pm[A](pa: Parser[A]): Parser[(A)] = nonEmptyParts match {
+    inline def pm[A](pa: Parser[A]): Parser[(A)] = nonEmptyParts match {
       case a :: b :: Nil =>
         (pair(a, pa)) <* endParser(b)
     }
 
-    def pm[A, B](pa: Parser[A], pb: Parser0[B]): Parser[(A, B)] = partsSafeHead match {
+    inline def pm[A, B](pa: Parser[A], pb: Parser0[B]): Parser[(A, B)] = partsSafeHead match {
       case (a, b :: c :: Nil) =>
         pair(a, pa).flatMap { ar =>
           (pair0(b, pb)).map { case (br) => (ar, br) } <* endParser0(c)
         }
     }
 
-    def pm[A, B, C](pa: Parser[A], pb: Parser0[B], pc: Parser0[C]): Parser[(A, B, C)] = partsSafeHead match {
+    inline def pm[A, B, C](pa: Parser[A], pb: Parser0[B], pc: Parser0[C]): Parser[(A, B, C)] = partsSafeHead match {
       case (a, b :: c :: d :: Nil) =>
         pair(a, pa).flatMap { ar =>
           (pair0(b, pb), pair0(c, pc)).mapN { case (br, cr) => (ar, br, cr) } <* endParser0(d)
         }
     }
 
-    def pm[A, B, C, D](pa: Parser[A], pb: Parser0[B], pc: Parser0[C], pd: Parser0[D]): Parser[(A, B, C, D)] = partsSafeHead match {
+    inline def pm[A, B, C, D](pa: Parser[A], pb: Parser0[B], pc: Parser0[C], pd: Parser0[D]): Parser[(A, B, C, D)] = partsSafeHead match {
       case (a, b :: c :: d :: e :: Nil) =>
         pair(a, pa).flatMap { ar =>
           (pair0(b, pb), pair0(c, pc), pair0(d, pd)).mapN { case (br, cr, dr) => (ar, br, cr, dr) } <* endParser0(e)
         }
     }
 
-    def pm[A, B, C, D, E](pa: Parser[A], pb: Parser0[B], pc: Parser0[C], pd: Parser0[D], pe: Parser0[E]): Parser[(A, B, C, D, E)] =
+    inline def pm[A, B, C, D, E](pa: Parser[A], pb: Parser0[B], pc: Parser0[C], pd: Parser0[D], pe: Parser0[E]): Parser[(A, B, C, D, E)] =
       partsSafeHead match {
         case (a, b :: c :: d :: e :: f :: Nil) =>
           pair(a, pa).flatMap { ar =>
@@ -1266,7 +1266,7 @@ package object interpolator {
           }
       }
 
-    def pm[A, B, C, D, E, F](
+    inline def pm[A, B, C, D, E, F](
         pa: Parser[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -1282,7 +1282,7 @@ package object interpolator {
         }
     }
 
-    def pm[A, B, C, D, E, F, G](
+    inline def pm[A, B, C, D, E, F, G](
         pa: Parser[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -1299,7 +1299,7 @@ package object interpolator {
         }
     }
 
-    def pm[A, B, C, D, E, F, G, H](
+    inline def pm[A, B, C, D, E, F, G, H](
         pa: Parser[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -1317,7 +1317,7 @@ package object interpolator {
         }
     }
 
-    def pm[A, B, C, D, E, F, G, H, I](
+    inline def pm[A, B, C, D, E, F, G, H, I](
         pa: Parser[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -1336,7 +1336,7 @@ package object interpolator {
         }
     }
 
-    def pm[A, B, C, D, E, F, G, H, I, J](
+    inline def pm[A, B, C, D, E, F, G, H, I, J](
         pa: Parser[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -1355,7 +1355,7 @@ package object interpolator {
         }
     }
 
-    def pm[A, B, C, D, E, F, G, H, I, J, K](
+    inline def pm[A, B, C, D, E, F, G, H, I, J, K](
         pa: Parser[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -1385,7 +1385,7 @@ package object interpolator {
         }
     }
 
-    def pm[A, B, C, D, E, F, G, H, I, J, K, L](
+    inline def pm[A, B, C, D, E, F, G, H, I, J, K, L](
         pa: Parser[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -1417,7 +1417,7 @@ package object interpolator {
         }
     }
 
-    def pm[A, B, C, D, E, F, G, H, I, J, K, L, M](
+    inline def pm[A, B, C, D, E, F, G, H, I, J, K, L, M](
         pa: Parser[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -1453,7 +1453,7 @@ package object interpolator {
         }
     }
 
-    def pm[A, B, C, D, E, F, G, H, I, J, K, L, M, N](
+    inline def pm[A, B, C, D, E, F, G, H, I, J, K, L, M, N](
         pa: Parser[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -1491,7 +1491,7 @@ package object interpolator {
         }
     }
 
-    def pm[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O](
+    inline def pm[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O](
         pa: Parser[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -1531,7 +1531,7 @@ package object interpolator {
         }
     }
 
-    def pm[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P](
+    inline def pm[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P](
         pa: Parser[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -1573,7 +1573,7 @@ package object interpolator {
         }
     }
 
-    def pm[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q](
+    inline def pm[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q](
         pa: Parser[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -1617,7 +1617,7 @@ package object interpolator {
         }
     }
 
-    def pm[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R](
+    inline def pm[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R](
         pa: Parser[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -1663,7 +1663,7 @@ package object interpolator {
         }
     }
 
-    def pm[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S](
+    inline def pm[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S](
         pa: Parser[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -1711,7 +1711,7 @@ package object interpolator {
         }
     }
 
-    def pm[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T](
+    inline def pm[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T](
         pa: Parser[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -1761,7 +1761,7 @@ package object interpolator {
         }
     }
 
-    def pm[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U](
+    inline def pm[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U](
         pa: Parser[A],
         pb: Parser0[B],
         pc: Parser0[C],
@@ -1813,7 +1813,7 @@ package object interpolator {
         }
     }
 
-    def pm[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V](
+    inline def pm[A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V](
         pa: Parser[A],
         pb: Parser0[B],
         pc: Parser0[C],
